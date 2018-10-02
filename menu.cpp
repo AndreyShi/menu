@@ -128,7 +128,8 @@ int CMenu::Createitem(const char * item, menuItem & menu_uk,int count, int id)
 
 void CMenu::initmenu_static()
 {
-	mStart = { txt,"mStart" ,0,0,0,0};
+	mStart = { txt,"mStart" ,0,0,0,0,0,0};
+	inputPass = { idPass };
 
 	mDiag[0] = { 1,sDiag[0],&mDiag[9],&mDiag[1],nullptr,nullptr,&mAllpar[1],&mStart };
 	mDiag[1] = { 2,sDiag[1],&mDiag[0],&mDiag[2],nullptr,nullptr,nullptr,&mStart };
@@ -214,6 +215,13 @@ void CMenu::updatemenu_old()
 		return;
 	}
 
+	//if the pointer is not processed, an error will appear
+	//this code should always be at the end of this function
+	system("cls");
+	printf("SwitchMenu(): меню или указатель не найден!\n");
+	printf("id указателя: %d", curItem->id);
+	Sleep(5000);
+	curItem = &mStart;
 }
 
 

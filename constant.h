@@ -34,6 +34,7 @@
 #define txt     9999
 #define title   9998
 #define end     -1
+#define idPass   100
 
 
 enum menu_e {

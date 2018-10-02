@@ -32,7 +32,7 @@ public:
 		struct menuItem *stop;
 	}  menuItem;
 
-	menuItem *curItem, mStart,mDiag[11], mAllpar[8], mDebugMode[6];
+	menuItem *curItem, mStart,mDiag[11], mAllpar[8], mDebugMode[6],inputPass;
 
 	void Createmenu(const char items[][23],menuItem &menu,int title1=0);
 	void CreatemenuDiag_static();
