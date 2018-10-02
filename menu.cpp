@@ -252,6 +252,7 @@ void CMenu::update_menuStart(menuItem & menu_p, int x)
 	if (EnterMenu == true || BackMenu == true) {
 		size = GetSizeMenu(*curItem);
 		system("cls");
+		EnterMenu = BackMenu = false;
 	}
 
 	for (int x = 0; x < size; x++)
@@ -507,6 +508,7 @@ int CMenu::goto_menuDiagnostika()
 	{
 		//SetMenu(mDiag[0], menu_e::diagnostika, 2, 0);
 		curItem = &mDiag[0];
+		EnterMenu = true;
 		return 1;
 	}
 	return 0;
