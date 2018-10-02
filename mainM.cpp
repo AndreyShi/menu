@@ -8,7 +8,8 @@ int main()
 	CMenu m;
 	m.initmenu_static();
 
-	m.curItem = &m.mStart;
+	//m.curItem = &m.mStart;
+	m.SetMenu(m.mStart, menu_e::start, 0, 0);
 	m.gotoxy(0, 15);
 	printf("для входа в меню нажмите d ");
 	while (1) // main cycle
@@ -26,10 +27,10 @@ int main()
 				m.menu_DOWN();
 				break;
 			case KeyLeft:
-				printf("KeyLeft\n");
+				m.menu_LEFT();
 				break;
 			case KeyRight:
-				printf("KeyRight\n");
+				m.menu_RIGHT();
 				break;
 			case KeyEnter:
 				m.menu_ENTER();
@@ -46,7 +47,7 @@ int main()
 			if (m.kbhit == true)
 			{
 				//m.updatemenu();
-				m.updatemenu_simple();
+				m.updatemenu_old();
 				m.inversemenuitem();
 				m.kbhit = false;
 

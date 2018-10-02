@@ -130,32 +130,32 @@ void CMenu::initmenu_static()
 {
 	mStart = { txt,"mStart" ,0,0,0,0};
 
-	mDiag[0] = { 1,sDiag[0],&mDiag[9],&mDiag[1],&mAllpar[1],&mStart };
-	mDiag[1] = { 2,sDiag[1],&mDiag[0],&mDiag[2],0,&mStart };
-	mDiag[2] = { 3,sDiag[2],&mDiag[1],&mDiag[3],0,&mStart };
-	mDiag[3] = { 4,sDiag[3],&mDiag[2],&mDiag[4],0,&mStart };
-	mDiag[4] = { 5,sDiag[4],&mDiag[3],&mDiag[5],0,&mStart };
-	mDiag[5] = { 6,sDiag[5],&mDiag[4],&mDiag[7],0,&mStart };
-	mDiag[6] = { 0,line,0,0,0,0 };
-	mDiag[7] = { 8,sDiag[6],&mDiag[5],&mDiag[8],0,&mStart };
-	mDiag[8] = { 9,sDiag[7],&mDiag[7],&mDiag[9],&mDebugMode[1],&mStart };
-	mDiag[9] = { 10,sDiag[8],&mDiag[8],&mDiag[0],0,&mStart };
+	mDiag[0] = { 1,sDiag[0],&mDiag[9],&mDiag[1],nullptr,nullptr,&mAllpar[1],&mStart };
+	mDiag[1] = { 2,sDiag[1],&mDiag[0],&mDiag[2],nullptr,nullptr,nullptr,&mStart };
+	mDiag[2] = { 3,sDiag[2],&mDiag[1],&mDiag[3],nullptr,nullptr,nullptr,&mStart };
+	mDiag[3] = { 4,sDiag[3],&mDiag[2],&mDiag[4],nullptr,nullptr,nullptr,&mStart };
+	mDiag[4] = { 5,sDiag[4],&mDiag[3],&mDiag[5],nullptr,nullptr,nullptr,&mStart };
+	mDiag[5] = { 6,sDiag[5],&mDiag[4],&mDiag[7],nullptr,nullptr,nullptr,&mStart };
+	mDiag[6] = { 0,line,0,0,0,0,0,0 };
+	mDiag[7] = { 8,sDiag[6],&mDiag[5],&mDiag[8],nullptr,nullptr,nullptr,&mStart };
+	mDiag[8] = { 9,sDiag[7],&mDiag[7],&mDiag[9],nullptr,nullptr,&mDebugMode[1],&mStart };
+	mDiag[9] = { 10,sDiag[8],&mDiag[8],&mDiag[0],nullptr,nullptr,nullptr,&mStart };
 	mDiag[10] = { end };
 
 	mAllpar[0] = { title,sAllpar[0],0,0,0,0 };
-	mAllpar[1] = { 2,sAllpar[1],&mAllpar[6],&mAllpar[2],0,&mDiag[0] };
-	mAllpar[2] = { 3,sAllpar[2],&mAllpar[1],&mAllpar[4],0,&mDiag[0] };
+	mAllpar[1] = { 2,sAllpar[1],&mAllpar[6],&mAllpar[2],nullptr,nullptr,0,&mDiag[0] };
+	mAllpar[2] = { 3,sAllpar[2],&mAllpar[1],&mAllpar[4],nullptr,nullptr,0,&mDiag[0] };
 	mAllpar[3] = { 0,line,0,0,0,0 };
-	mAllpar[4] = { 5,sAllpar[3],&mAllpar[2],&mAllpar[5],0,&mDiag[0] };
-	mAllpar[5] = { 6,sAllpar[4],&mAllpar[4],&mAllpar[6],0,&mDiag[0] };
-	mAllpar[6] = { 7,sAllpar[5],&mAllpar[5],&mAllpar[1],0,&mDiag[0] };
+	mAllpar[4] = { 5,sAllpar[3],&mAllpar[2],&mAllpar[5],nullptr,nullptr,0,&mDiag[0] };
+	mAllpar[5] = { 6,sAllpar[4],&mAllpar[4],&mAllpar[6],nullptr,nullptr,0,&mDiag[0] };
+	mAllpar[6] = { 7,sAllpar[5],&mAllpar[5],&mAllpar[1],nullptr,nullptr,0,&mDiag[0] };
 	mAllpar[7] = { end };
 
 	mDebugMode[0] = { title,sDebugMode[0],0,0,0,0 };
-	mDebugMode[1] = { 2,sDebugMode[1],&mDebugMode[4],&mDebugMode[2],0,&mDiag[8] };
-	mDebugMode[2] = { 3,sDebugMode[2],&mDebugMode[1],&mDebugMode[3],0,&mDiag[8] };
-	mDebugMode[3] = { 4,sDebugMode[3],&mDebugMode[2],&mDebugMode[4],0,&mDiag[8] };
-	mDebugMode[4] = { 5,sDebugMode[4],&mDebugMode[3],&mDebugMode[1],0,&mDiag[8] };
+	mDebugMode[1] = { 2,sDebugMode[1],&mDebugMode[4],&mDebugMode[2],nullptr,nullptr,0,&mDiag[8] };
+	mDebugMode[2] = { 3,sDebugMode[2],&mDebugMode[1],&mDebugMode[3],nullptr,nullptr,0,&mDiag[8] };
+	mDebugMode[3] = { 4,sDebugMode[3],&mDebugMode[2],&mDebugMode[4],nullptr,nullptr,0,&mDiag[8] };
+	mDebugMode[4] = { 5,sDebugMode[4],&mDebugMode[3],&mDebugMode[1],nullptr,nullptr,0,&mDiag[8] };
 	mDebugMode[5] = { end };
 }
 
@@ -181,13 +181,13 @@ void CMenu::updatemenu()
 	}
 }
 
-void CMenu::updatemenu_simple()
+void CMenu::updatemenu_old()
 {	
 	for (int x = 0; mDiag[x].id != end; x++)
 	{
 		if (curItem == &mDiag[x])
 		{
-			update_menu(*mDiag,x);
+			update_menuDiagn(*mDiag,x);
 			return;
 		}
 	}
@@ -195,7 +195,7 @@ void CMenu::updatemenu_simple()
 	{
 		if (curItem == &mAllpar[x])
 		{
-			update_menu(*mAllpar,x);
+			update_menuAllpar(*mAllpar,x);
 			return;
 		}
 	}
@@ -203,14 +203,14 @@ void CMenu::updatemenu_simple()
 	{
 		if (curItem == &mDebugMode[x])
 		{			
-			update_menu(*mDebugMode,x);
+			update_menuDebugMode(*mDebugMode,x);
 			return;
 		}
 	}
 
 	if (curItem == &mStart)
 	{
-		update_menu(mStart);
+		update_menuStart(mStart);
 		return;
 	}
 
@@ -235,11 +235,95 @@ void CMenu::update_menu(menuItem & menu_p,int x)
 {
 	menuItem *menu = &menu_p;
 	gotoxy(0, 0);
+	if (updown == true)
+	{
+		for (int x = 0; x < size; x++)
+		{
+			printf("%s\n", menu[x].text);
+		}
+		updown = false;
+	}
+}
+
+void CMenu::update_menuStart(menuItem & menu_p, int x)
+{
+	menuItem *menu = &menu_p;
+	gotoxy(0, 0);
+	if (EnterMenu == true || BackMenu == true) {
+		size = GetSizeMenu(*curItem);
+		system("cls");
+	}
+
+	for (int x = 0; x < size; x++)
+	{
+		printf("%s\n", menu[x].text);
+	}
+
+
+}
+
+void CMenu::update_menuDiagn(menuItem & menu_p, int x)
+{
+	menuItem *menu = &menu_p;
+	gotoxy(0, 0);
 	if (EnterMenu == true || BackMenu == true) {
 		system("cls");
 		updown = true;
 		size = GetSizeMenu(*curItem);
 		menucounter = 0;
+		maxcount = size - 2;
+		if (BackMenu == true)
+		{
+			menucounter = x - 1;
+		}
+		EnterMenu = BackMenu = false;
+	}
+	if (updown == true)
+	{
+		for (int x = 0; x < size; x++)
+		{
+			printf("%s\n", menu[x].text);
+		}
+		updown = false;
+	}
+}
+
+void CMenu::update_menuAllpar(menuItem & menu_p, int x)
+{
+	menuItem *menu = &menu_p;
+	gotoxy(0, 0);
+	if (EnterMenu == true || BackMenu == true) {
+		system("cls");
+		updown = true;
+		size = GetSizeMenu(*curItem);
+		menucounter = 0;
+		maxcount = size - 3;
+		if (BackMenu == true)
+		{
+			menucounter = x - 1;
+		}
+		EnterMenu = BackMenu = false;
+	}
+	if (updown == true)
+	{
+		for (int x = 0; x < size; x++)
+		{
+			printf("%s\n", menu[x].text);
+		}
+		updown = false;
+	}
+}
+
+void CMenu::update_menuDebugMode(menuItem & menu_p, int x)
+{
+	menuItem *menu = &menu_p;
+	gotoxy(0, 0);
+	if (EnterMenu == true || BackMenu == true) {
+		system("cls");
+		updown = true;
+		size = GetSizeMenu(*curItem);
+		menucounter = 0;
+		maxcount = size - 2;
 		if (BackMenu == true)
 		{
 			menucounter = x - 1;
@@ -290,6 +374,24 @@ void CMenu::menu_DOWN()
 		menucounter++;
 		if (menucounter > maxcount) menucounter = 0;
 		updown = true;
+	}
+}
+
+void CMenu::menu_LEFT()
+{
+	if (curItem->left)
+	{
+		curItem = curItem->left;
+		updown = false;
+	}
+}
+
+void CMenu::menu_RIGHT()
+{
+	if (curItem->right)
+	{
+		curItem = curItem->right;
+		updown = false;
 	}
 }
 
@@ -376,6 +478,7 @@ void CMenu::switchmenu(int menuold)
 		if (menuold == menu_e::diagnostika) SetMenu(mAllpar[1], menu_e::allpar, 3, 0);
 		break;
 	case menu_e::diagnostika:
+		if (menuold == menu_e::start)       SetMenu(mDiag[0], menu_e::diagnostika, 2, 0);
 		if (menuold == menu_e::allpar)      SetMenu(mDiag[0], menu_e::diagnostika, 2, 0);
 		if (menuold == menu_e::debugmode)   SetMenu(mDiag[8], menu_e::diagnostika, 2, 7);
 		break;
@@ -402,7 +505,8 @@ int CMenu::goto_menuDiagnostika()
 {
 	if (curItem == &mStart)
 	{
-		SetMenu(mDiag[0], menu_e::diagnostika, 2, 0);
+		//SetMenu(mDiag[0], menu_e::diagnostika, 2, 0);
+		curItem = &mDiag[0];
 		return 1;
 	}
 	return 0;
