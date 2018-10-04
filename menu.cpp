@@ -182,14 +182,14 @@ void CMenu::updatemenu()
 	}
 }
 
-void CMenu::updatemenu_old()
+int CMenu::updatemenu_m()
 {	
 	for (int x = 0; mDiag[x].id != end; x++)
 	{
 		if (curItem == &mDiag[x])
 		{
 			update_menuDiagn(*mDiag,x);
-			return;
+			return 0;
 		}
 	}
 	for (int x = 0; mAllpar[x].id != end; x++)
@@ -197,7 +197,7 @@ void CMenu::updatemenu_old()
 		if (curItem == &mAllpar[x])
 		{
 			update_menuAllpar(*mAllpar,x);
-			return;
+			return 0;
 		}
 	}
 	for (int x = 0; mDebugMode[x].id != end; x++)
@@ -205,23 +205,65 @@ void CMenu::updatemenu_old()
 		if (curItem == &mDebugMode[x])
 		{			
 			update_menuDebugMode(*mDebugMode,x);
-			return;
+			return 0;
 		}
 	}
 
 	if (curItem == &mStart)
 	{
 		update_menuStart(mStart);
-		return;
+		return 0;
 	}
 
-	//if the pointer is not processed, an error will appear
-	//this code should always be at the end of this function
-	system("cls");
-	printf("SwitchMenu(): меню или указатель не найден!\n");
-	printf("id указателя: %d", curItem->id);
-	Sleep(5000);
-	curItem = &mStart;
+	return -1;
+	
+}
+
+void CMenu::menu_actions()
+{
+	if (kbhit == false) return;
+
+	check_pointer();
+
+	if (updatemenu_m() == pointer_not_found)
+	{
+		//if the pointer is not processed, an error will appear
+		//this code should always be at the end of this function
+		system("cls");
+		printf("updatemenu_m() : указатель не найден!\n");
+		printf("id указателя: %d\n", curItem->id);
+		Sleep(3500);
+		curItem = &mStart;
+		EnterMenu = true;
+	}
+	inversemenuitem();
+	kbhit = false;
+
+	gotoxy(0, 15);
+	printf("size_menu:%d  maxcount:%d  menucounter:%d\n", size, maxcount, menucounter);
+	printf("k_c : %d\n", k_c);
+	printf("СТОП - esc\nПУСК - s\nДИАГНОСТИКА - d\n");
+}
+
+void CMenu::check_pointer()
+{
+	if (curItem->id == 0 &&
+		curItem->text == 0 &&
+		curItem->up == 0 &&
+		curItem->down == 0 &&
+		curItem->left == 0 &&
+		curItem->right == 0 &&
+		curItem->enter == 0 &&
+		curItem->stop == 0
+		)
+	{
+		system("cls");
+		printf("check_pointer(): указатель пуст!\n");
+		printf("адрес указателя: %p\n", curItem);
+		Sleep(3500);
+		curItem = &mStart;
+		EnterMenu = true;
+	}
 }
 
 
@@ -514,7 +556,6 @@ int CMenu::goto_menuDiagnostika()
 {
 	if (curItem == &mStart)
 	{
-		//SetMenu(mDiag[0], menu_e::diagnostika, 2, 0);
 		curItem = &mDiag[0];
 		EnterMenu = true;
 		return 1;

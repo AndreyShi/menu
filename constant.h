@@ -36,6 +36,7 @@
 #define end     -1
 #define idPass   100
 
+#define pointer_not_found -1
 
 enum menu_e {
 	start       = 0,

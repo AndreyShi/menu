@@ -8,8 +8,8 @@ int main()
 	CMenu m;
 	m.initmenu_static();
 
-	//m.curItem = &m.mStart;
-	m.SetMenu(m.mStart, menu_e::start, 0, 0);
+	m.curItem = &m.mStart;
+
 	m.gotoxy(0, 15);
 	printf("äëÿ âõîäà â ìåíş íàæìèòå d ");
 	while (1) // main cycle
@@ -44,18 +44,7 @@ int main()
 			default:
 				break;
 			}
-			if (m.kbhit == true)
-			{
-				//m.updatemenu();
-				m.updatemenu_old();
-				m.inversemenuitem();
-				m.kbhit = false;
-
-				m.gotoxy(0, 15);
-				printf("size_menu:%d  maxcount:%d  menucounter:%d\n",m.size,m.maxcount, m.menucounter);
-				printf("k_c : %d\n", m.k_c);
-				printf("ÑÒÎÏ - esc\nÏÓÑÊ - s\nÄÈÀÃÍÎÑÒÈÊÀ - d\n");
-			}
+			m.menu_actions();			
 		}
 	}
 }
