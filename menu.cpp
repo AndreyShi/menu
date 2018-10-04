@@ -128,11 +128,11 @@ int CMenu::Createitem(const char * item, menuItem & menu_uk,int count, int id)
 
 void CMenu::initmenu_static()
 {
-	mStart = { txt,"mStart" ,0,0,0,0,0,0};
-	inputPass = { idPass };
+	mStart = { txt,"to enter the menu Diagnostika, press: d " ,0,0,0,0,0,0};
+	inputPass = { idPass,0,0,0,0,0,0,&mDiag[1] };
 
 	mDiag[0] = { 1,sDiag[0],&mDiag[9],&mDiag[1],nullptr,nullptr,&mAllpar[1],&mStart };
-	mDiag[1] = { 2,sDiag[1],&mDiag[0],&mDiag[2],nullptr,nullptr,nullptr,&mStart };
+	mDiag[1] = { 2,sDiag[1],&mDiag[0],&mDiag[2],nullptr,nullptr,&inputPass,&mStart };
 	mDiag[2] = { 3,sDiag[2],&mDiag[1],&mDiag[3],nullptr,nullptr,nullptr,&mStart };
 	mDiag[3] = { 4,sDiag[3],&mDiag[2],&mDiag[4],nullptr,nullptr,nullptr,&mStart };
 	mDiag[4] = { 5,sDiag[4],&mDiag[3],&mDiag[5],nullptr,nullptr,nullptr,&mStart };
@@ -208,6 +208,11 @@ int CMenu::updatemenu_m()
 			return 0;
 		}
 	}
+	if (curItem->id == idPass)
+	{
+		update_menuInputPass();
+		return 0;
+	}
 
 	if (curItem == &mStart)
 	{
@@ -228,7 +233,6 @@ void CMenu::menu_actions()
 	if (updatemenu_m() == pointer_not_found)
 	{
 		//if the pointer is not processed, an error will appear
-		//this code should always be at the end of this function
 		system("cls");
 		printf("updatemenu_m() : указатель не найден!\n");
 		printf("id указател€: %d\n", curItem->id);
@@ -263,6 +267,22 @@ void CMenu::check_pointer()
 		Sleep(3500);
 		curItem = &mStart;
 		EnterMenu = true;
+	}
+}
+
+void CMenu::switch_stream()
+{
+
+	switch (curItem->id)
+	{
+	case idPass:
+		//Sleep(500);
+		gotoxy(15, 12);
+		scanf("%d");
+		//printf("#");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -325,7 +345,10 @@ void CMenu::update_menuDiagn(menuItem & menu_p, int x)
 		maxcount = size - 2;
 		if (BackMenu == true)
 		{
-			menucounter = x - 1;
+			if (x < 6)
+				menucounter = x;
+			else
+				menucounter = x - 1;
 		}
 		EnterMenu = BackMenu = false;
 	}
@@ -389,6 +412,12 @@ void CMenu::update_menuDebugMode(menuItem & menu_p, int x)
 		}
 		updown = false;
 	}
+}
+
+void CMenu::update_menuInputPass()
+{
+	gotoxy(0, 12);
+	printf("¬ведите пароль:");
 }
 
 int CMenu::GetSizeMenu(menuItem & menu_p)

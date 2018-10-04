@@ -7,17 +7,16 @@ int main()
 	setlocale(LC_ALL, "Russian");
 	CMenu m;
 	m.initmenu_static();
-
 	m.curItem = &m.mStart;
+	printf("to enter the menu Diagnostika, press: d ");
 
-	m.gotoxy(0, 15);
-	printf("для входа в меню нажмите d ");
 	while (1) // main cycle
 	{
 		if (_kbhit())
 		{
 			m.kbhit = true;
 			m.k_c = _getch();
+
 			switch (m.k_c)
 			{
 			case KeyUp:
@@ -42,9 +41,11 @@ int main()
 				m.goto_menuDiagnostika();
 				break;
 			default:
-				break;
+				break;				
 			}
-			m.menu_actions();			
+			m.menu_actions();
 		}
+
+		m.switch_stream();
 	}
 }

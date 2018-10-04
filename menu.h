@@ -20,6 +20,8 @@ public:
 	bool EnterMenu;
 	bool BackMenu;
 
+	int inpass = idPass;
+
 	typedef struct  menuItem
 	{
 		int id;
@@ -34,25 +36,13 @@ public:
 
 	menuItem *curItem, mStart,mDiag[11], mAllpar[8], mDebugMode[6],inputPass;
 
-/////// these features are in development
-	void Createmenu(const char items[][23],menuItem &menu,int title1=0);
-	void CreatemenuDiag_static();
-	void InsertItem_static(const char *item, menuItem &menu, int insert);
-	int Createitem(const char *item, menuItem &menu,int count, int id = 0);
-	void update_menu(menuItem & menu_p,int x = 0);
-	void updatemenu();
-	void detectmenu();
-	void switchmenu(int menuold);
-	void SetMenu(menuItem &item, int menu, int offset_maxcounter, int counter);
-///////////////////////////////
-
-
 /////////////// main functions of these
 	int updatemenu_m();
 	void update_menuStart(menuItem & menu_p, int x = 0);
 	void update_menuDiagn(menuItem & menu_p, int x = 0);
 	void update_menuAllpar(menuItem & menu_p, int x = 0);
 	void update_menuDebugMode(menuItem & menu_p, int x = 0);
+	void update_menuInputPass();
 
 	void initmenu_static();	
 	void inversemenuitem();		
@@ -65,9 +55,23 @@ public:
 	
 	void menu_actions();
 	void check_pointer();
+	void switch_stream();
 	
 	int GetSizeMenu(menuItem &item);
 	void gotoxy(int x, int y);
 	int goto_menuDiagnostika();
 /////////////////////////
+
+
+	/////// these features are in development
+	void Createmenu(const char items[][23], menuItem &menu, int title1 = 0);
+	void CreatemenuDiag_static();
+	void InsertItem_static(const char *item, menuItem &menu, int insert);
+	int Createitem(const char *item, menuItem &menu, int count, int id = 0);
+	void update_menu(menuItem & menu_p, int x = 0);
+	void updatemenu();
+	void detectmenu();
+	void switchmenu(int menuold);
+	void SetMenu(menuItem &item, int menu, int offset_maxcounter, int counter);
+	///////////////////////////////
 };
