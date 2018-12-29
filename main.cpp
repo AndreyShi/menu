@@ -1,51 +1,30 @@
-#include "menu.h"
-
+#include "ui.h"
 #pragma warning(disable : 4996)
+UI menu;
 
-int main()
-{
-	setlocale(LC_ALL, "Russian");
-	CMenu m;
-	m.initmenu_static();
-	m.curItem = &m.mStart;
-	printf("to enter the menu Diagnostika, press: d ");
+int main(){	
 
-	while (1) // main cycle
-	{
-		if (_kbhit())
-		{
-			m.kbhit = true;
-			m.k_c = _getch();
+	while (1) {				// main cycle
 
-			switch (m.k_c)
-			{
-			case KeyUp:
-				m.menu_UP();
-				break;
-			case KeyDown:
-				m.menu_DOWN();
-				break;
-			case KeyLeft:
-				m.menu_LEFT();
-				break;
-			case KeyRight:
-				m.menu_RIGHT();
-				break;
-			case KeyEnter:
-				m.menu_ENTER();
-				break;
-			case KeyStop:
-				m.menu_STOP();
-				break;
-			case KeyDiagn:
-				m.goto_menuDiagnostika();
-				break;
-			default:
-				break;				
-			}
-			m.menu_actions();
+		menu.actions(); // действия не связанные с нажатием кнопок
+		if (_kbhit()){ // действия по нажатию кнопки
+
+			menu.kbhit = true;
+			menu.k_c = _getch();  //считываем код нажатой кнопки
+			menu.kbhit = menu.k_c;
+			menu.number_key();    //обработка кнопок 
+			menu.command_key();	  //обработка навигационных кнопок
+			menu.update();        //отрисовка меню
 		}
+	}
+}
 
-		m.switch_stream();
+DWORD WINAPI Timer(LPVOID lparam){
+
+	UI *pMenu = static_cast<UI*>(lparam);
+
+	while (1){
+		Sleep(LIR_RTC_TICK);
+		pMenu->count++;
 	}
 }

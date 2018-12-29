@@ -1,240 +1,171 @@
-#include "menu.h"
-#include "windows.h"
+#include "ui.h"
+
 #pragma warning(disable : 4996)
 
-void CMenu::Createmenu(const char items[][23],menuItem & menu_uk, int title1)
+void UI::flashing_cursor(unsigned int x_, unsigned int y_)
 {
-	menuItem *menu = &menu_uk;
-
-	int x = 0;
-	int size = 0;
-	for (; x < 16; x++)
+	if (count >= 100)
 	{
-		if ((int)items[x][0] == -1) break;
-		if (x == 6)
+		count = 0;
+		gotoxy(x_ + cursor_pos, y_);
+		printf(" ");
+	}
+	else
+	{
+		gotoxy(x_ + cursor_pos, y_);
+		if (count >= 50)
+			printf(" ");
+		else
+			printf("#");
+	}
+
+	if (cursor_pos > 0)
+	{
+		gotoxy((x_ - 1) + cursor_pos, y_);
+		printf("%c", sym);
+	}
+	gotoxy(x_ + cursor_pos + 1, y_);
+	printf(" ");
+
+	/*if (Update_input_str)
+	{
+		display.print_ram_local((char*)bufASCIIstr, page, x_, y_);
+		Update_input_str = false;
+	} */
+}
+void UI::DrawMenu(const menuItem * menu, const int & size)
+{
+	for (int x = 0; x < size; x++)
+	{
+		if (menu[x].text == 0)
 		{
-			menu[x].id = 0;
-			menu[x].text = "-------------------------------";
-			x++;
+			printf("(текст не найден)\n");
 		}
-		menu[x].id = x + 1;
-		menu[x].text = items[x];		
-	}
-	size = x;
-	printf("%d", size);
-
-	for (int x = 0; x < size; x++)
-	{
-
-		if (x == 0) { 
-			menu[x].up = &menu[size-1]; x++; 
-		}
-		menu[x].up = &menu[x - 1];
-	}
-
-	for (int x = 0; x < size; x++)
-	{
-		if (x == 6) x++;
-		if (x == size - 1) {
-			menu[x].down = &menu[0]; break;
-		}
-		menu[x].down = &menu[x + 1];		
+		else
+			printf("%s\n", menu[x].text);
 	}
 }
 
-void CMenu::CreatemenuDiag_static()
+void UI::initmenu()
 {
-	int x = 0;
-	int size = 0;
-	for (; x < 16; x++)
-	{
-		if ((int)sDiag[x][0] == -1) break;
-		mDiag[x].id = x + 1;
-		mDiag[x].text = sDiag[x];
-	}
-	size = x;
-	printf("%d", size);
+	mStart = { txt,"to enter the menu Diagnostika, press: d "};
+	mAbout = { txt,"О ПРОГРАММЕ\n",0,0,0,&mDiag[9] };
+	inputPass = { idPass };
+  //menuitem   |id|string  |   up    |  down   |   enter   |  stop  |
+	mDiag[0] = { 1,sDiag[0],&mDiag[9],&mDiag[1],&inputPass,&mStart };
+	mDiag[1] = { 2,sDiag[1],&mDiag[0],&mDiag[2],&inputPass,&mStart };
+	mDiag[2] = { 3,sDiag[2],&mDiag[1],&mDiag[3],0,&mStart };
+	mDiag[3] = { 4,sDiag[3],&mDiag[2],&mDiag[4],0,&mStart };
+	mDiag[4] = { 5,sDiag[4],&mDiag[3],&mDiag[5],0,&mStart };
+	mDiag[5] = { 6,sDiag[5],&mDiag[4],&mDiag[7],0,&mStart };
+	mDiag[6] = { 0,line};
+	mDiag[7] = { 8,sDiag[6],&mDiag[5],&mDiag[8],0,&mStart };
+	mDiag[8] = { 9,sDiag[7],&mDiag[7],&mDiag[9],&mDebugMode[1],&mStart };
+	mDiag[9] = { 10,sDiag[8],&mDiag[8],&mDiag[0],&mAbout,&mStart };
+	mDiag[10] = { endmenu };
 
-	for (int x = 0; x < size; x++)
-	{
-		if (x == 0) {
-			mDiag[x].up = &mDiag[size - 1]; x++;
-		}
-		mDiag[x].up = &mDiag[x - 1];
-	}
-
-	for (int x = 0; x < size; x++)
-	{
-		if (x == size - 1) {
-			mDiag[x].down = &mDiag[0]; break;
-		}
-		mDiag[x].down = &mDiag[x + 1];
-	}
-}
-
-void CMenu::InsertItem_static(const char * str, menuItem & menu_uk, int insert)
-{
-	menuItem *menu = &menu_uk;
-
-	int x = 0;
-	int size = 0;
-	char buf[50];
-	for (; x < 16; x++)
-	{
-		strncpy(buf, menu[x].text, 50);
-		if ((int)buf[0] == -1)break;
-	}
-	size = x;
-
-	for (int x = 0; x < size; x++)
-	{
-		menu[(size - x) + 1].text = menu[size - x].text;
-		if (x == insert)
-		{
-			menu[insert].text = str;
-		}
-	}
-
-	
-
-}
-
-int CMenu::Createitem(const char * item, menuItem & menu_uk,int count, int id)
-{
-	menuItem *menu = &menu_uk;
-
-	int x = count;
-	int size = sizeof menu_uk;
-
-	if ((int)item[0] == -1) return 0;
-	menu[x].id = count;
-	menu[x].text = item;
-
-	size = x;
-
-	if (x == 0) {
-		menu[x].up = &menu[size]; 
-	}
-	menu[x].up = &menu[x - 1];
-
-	if (x == size) {
-		menu[x].down = &menu[0]; return 1;
-	}
-	menu[x].down = &menu[x + 1];
-	return 1;
-}
-
-
-
-void CMenu::initmenu_static()
-{
-	mStart = { txt,"to enter the menu Diagnostika, press: d " ,0,0,0,0,0,0};
-	inputPass = { idPass,0,0,0,0,0,0,&mDiag[1] };
-
-	mDiag[0] = { 1,sDiag[0],&mDiag[9],&mDiag[1],nullptr,nullptr,&mAllpar[1],&mStart };
-	mDiag[1] = { 2,sDiag[1],&mDiag[0],&mDiag[2],nullptr,nullptr,&inputPass,&mStart };
-	mDiag[2] = { 3,sDiag[2],&mDiag[1],&mDiag[3],nullptr,nullptr,nullptr,&mStart };
-	mDiag[3] = { 4,sDiag[3],&mDiag[2],&mDiag[4],nullptr,nullptr,nullptr,&mStart };
-	mDiag[4] = { 5,sDiag[4],&mDiag[3],&mDiag[5],nullptr,nullptr,nullptr,&mStart };
-	mDiag[5] = { 6,sDiag[5],&mDiag[4],&mDiag[7],nullptr,nullptr,nullptr,&mStart };
-	mDiag[6] = { 0,line,0,0,0,0,0,0 };
-	mDiag[7] = { 8,sDiag[6],&mDiag[5],&mDiag[8],nullptr,nullptr,nullptr,&mStart };
-	mDiag[8] = { 9,sDiag[7],&mDiag[7],&mDiag[9],nullptr,nullptr,&mDebugMode[1],&mStart };
-	mDiag[9] = { 10,sDiag[8],&mDiag[8],&mDiag[0],nullptr,nullptr,nullptr,&mStart };
-	mDiag[10] = { end };
-
-	mAllpar[0] = { title,sAllpar[0],0,0,0,0 };
-	mAllpar[1] = { 2,sAllpar[1],&mAllpar[6],&mAllpar[2],nullptr,nullptr,0,&mDiag[0] };
-	mAllpar[2] = { 3,sAllpar[2],&mAllpar[1],&mAllpar[4],nullptr,nullptr,0,&mDiag[0] };
+	mAllpar[0] = { title,sAllpar[0]};
+	mAllpar[1] = { 2,sAllpar[1],&mAllpar[6],&mAllpar[2],0,&mDiag[0] };
+	mAllpar[2] = { 3,sAllpar[2],&mAllpar[1],&mAllpar[4],0,&mDiag[0] };
 	mAllpar[3] = { 0,line,0,0,0,0 };
-	mAllpar[4] = { 5,sAllpar[3],&mAllpar[2],&mAllpar[5],nullptr,nullptr,0,&mDiag[0] };
-	mAllpar[5] = { 6,sAllpar[4],&mAllpar[4],&mAllpar[6],nullptr,nullptr,0,&mDiag[0] };
-	mAllpar[6] = { 7,sAllpar[5],&mAllpar[5],&mAllpar[1],nullptr,nullptr,0,&mDiag[0] };
-	mAllpar[7] = { end };
+	mAllpar[4] = { 5,sAllpar[3],&mAllpar[2],&mAllpar[5],0,&mDiag[0] };
+	mAllpar[5] = { 6,sAllpar[4],&mAllpar[4],&mAllpar[6],0,&mDiag[0] };
+	mAllpar[6] = { 7,sAllpar[5],&mAllpar[5],&mAllpar[1],0,&mDiag[0] };
+	mAllpar[7] = { endmenu };
 
-	mDebugMode[0] = { title,sDebugMode[0],0,0,0,0 };
-	mDebugMode[1] = { 2,sDebugMode[1],&mDebugMode[4],&mDebugMode[2],nullptr,nullptr,0,&mDiag[8] };
-	mDebugMode[2] = { 3,sDebugMode[2],&mDebugMode[1],&mDebugMode[3],nullptr,nullptr,0,&mDiag[8] };
-	mDebugMode[3] = { 4,sDebugMode[3],&mDebugMode[2],&mDebugMode[4],nullptr,nullptr,0,&mDiag[8] };
-	mDebugMode[4] = { 5,sDebugMode[4],&mDebugMode[3],&mDebugMode[1],nullptr,nullptr,0,&mDiag[8] };
-	mDebugMode[5] = { end };
+	mDebugMode[0] = { title,sDebugMode[0]};
+	mDebugMode[1] = { 2,sDebugMode[1],&mDebugMode[4],&mDebugMode[2],0,&mDiag[8] };
+	mDebugMode[2] = { 3,sDebugMode[2],&mDebugMode[1],&mDebugMode[3],0,&mDiag[8] };
+	mDebugMode[3] = { 4,sDebugMode[3],&mDebugMode[2],&mDebugMode[4],0,&mDiag[8] };
+	mDebugMode[4] = { 5,sDebugMode[4],&mDebugMode[3],&mDebugMode[1],0,&mDiag[8] };
+	mDebugMode[5] = { endmenu };
 }
 
-void CMenu::updatemenu()
+
+UI::UI()
 {
-	detectmenu();
-	switch (menu)
-	{
-	case menu_e::allpar:
-		update_menu(*mAllpar);
-		break;
-	case menu_e::debugmode:
-		update_menu(*mDebugMode);
-		break;
-	case menu_e::start:
-		update_menu(mStart);
-		break;
-	case menu_e::diagnostika:
-		update_menu(*mDiag);
-		break;
-	default:
-		break;
-	}
+	setlocale(LC_ALL, "Russian");
+	initmenu();
+	curItem = &mStart;
+	printf("to enter the menu Diagnostika, press: d ");
+
+	hTreadTimer = CreateThread(NULL, 0, Timer, this, 0, NULL);
+
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	//hide system cursor
+	CONSOLE_CURSOR_INFO structCursorInfo;
+	GetConsoleCursorInfo(hConsole, &structCursorInfo);
+	structCursorInfo.bVisible = FALSE;
+	SetConsoleCursorInfo(hConsole, &structCursorInfo);
+
+	inputnum = 11;
+
 }
 
-int CMenu::updatemenu_m()
+UI::~UI()
+{
+	CloseHandle(hTreadTimer);
+	hTreadTimer = NULL;
+}
+
+int UI::SwitchMenu()
 {	
-	for (int x = 0; mDiag[x].id != end; x++)
+	for (int i = 0; mDiag[i].id != endmenu; i++)
 	{
-		if (curItem == &mDiag[x])
+		if (curItem == &mDiag[i])
 		{
-			update_menuDiagn(*mDiag,x);
-			return 0;
+			update_menuDiagn(i);
+			return pointer_processed;
 		}
 	}
-	for (int x = 0; mAllpar[x].id != end; x++)
+	for (int i = 0; mAllpar[i].id != endmenu; i++)
 	{
-		if (curItem == &mAllpar[x])
+		if (curItem == &mAllpar[i])
 		{
-			update_menuAllpar(*mAllpar,x);
-			return 0;
+			update_menuAllpar(i);
+			return pointer_processed;
 		}
 	}
-	for (int x = 0; mDebugMode[x].id != end; x++)
+	for (int i = 0; mDebugMode[i].id != endmenu; i++)
 	{
-		if (curItem == &mDebugMode[x])
+		if (curItem == &mDebugMode[i])
 		{			
-			update_menuDebugMode(*mDebugMode,x);
-			return 0;
+			update_menuDebugMode(i);
+			return pointer_processed;
 		}
 	}
 	if (curItem->id == idPass)
 	{
 		update_menuInputPass();
-		return 0;
+		return pointer_processed;
 	}
 
 	if (curItem == &mStart)
 	{
-		update_menuStart(mStart);
-		return 0;
+		update_menuStart();
+		return pointer_processed;
+	}
+	if (curItem == &mAbout)
+	{
+		update_menuAbout();
+		return pointer_processed;
 	}
 
-	return -1;
+	return pointer_not_found;
 	
 }
 
-void CMenu::menu_actions()
+void UI::update()
 {
 	if (kbhit == false) return;
-
 	check_pointer();
 
-	if (updatemenu_m() == pointer_not_found)
+	if (SwitchMenu() == pointer_not_found)
 	{
 		//if the pointer is not processed, an error will appear
 		system("cls");
-		printf("updatemenu_m() : указатель не найден!\n");
+		printf("SwitchMenu() : указатель не найден!\n");
 		printf("id указателя: %d\n", curItem->id);
 		Sleep(3500);
 		curItem = &mStart;
@@ -245,18 +176,16 @@ void CMenu::menu_actions()
 
 	gotoxy(0, 15);
 	printf("size_menu:%d  maxcount:%d  menucounter:%d\n", size, maxcount, menucounter);
-	printf("k_c : %d\n", k_c);
-	printf("СТОП - esc\nПУСК - s\nДИАГНОСТИКА - d\n");
+	printf("key_press : %d \n", k_c);
+	//printf("СТОП - esc\nПУСК - s\nДИАГНОСТИКА - d\n");
 }
 
-void CMenu::check_pointer()
+void UI::check_pointer()
 {
 	if (curItem->id == 0 &&
 		curItem->text == 0 &&
 		curItem->up == 0 &&
 		curItem->down == 0 &&
-		curItem->left == 0 &&
-		curItem->right == 0 &&
 		curItem->enter == 0 &&
 		curItem->stop == 0
 		)
@@ -270,16 +199,106 @@ void CMenu::check_pointer()
 	}
 }
 
-void CMenu::switch_stream()
+void UI::actions()
 {
 
 	switch (curItem->id)
 	{
 	case idPass:
-		//Sleep(500);
-		gotoxy(15, 12);
-		scanf("%d");
-		//printf("#");
+		if (!passOK)
+		{
+			flashing_cursor(15, 12);
+			check_pass();
+		}
+		if (passOK)
+		{
+			if (menucounter == 0) curItem = &mAllpar[1];
+			if (menucounter == 1) curItem = &mDiag[1];
+			kbhit = true;
+			EnterMenu = true;
+			update();
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void UI::number_key()
+{
+	switch (curItem->id)
+	{
+		case idPass:
+			if (cursor_pos < inputnum)
+			{				
+				switch (k_c) {
+				case _key_0:  sym = 0x30; bufASCIIstr[cursor_pos] = sym; cursor_pos++; break;
+				case _key_1:  sym = 0x31; bufASCIIstr[cursor_pos] = sym; cursor_pos++; break;
+				case _key_2:  sym = 0x32; bufASCIIstr[cursor_pos] = sym; cursor_pos++; break;
+				case _key_3:  sym = 0x33; bufASCIIstr[cursor_pos] = sym; cursor_pos++; break;
+				case _key_4:  sym = 0x34; bufASCIIstr[cursor_pos] = sym; cursor_pos++; break;
+				case _key_5:  sym = 0x35; bufASCIIstr[cursor_pos] = sym; cursor_pos++; break;
+				case _key_6:  sym = 0x36; bufASCIIstr[cursor_pos] = sym; cursor_pos++; break;
+				case _key_7:  sym = 0x37; bufASCIIstr[cursor_pos] = sym; cursor_pos++; break;
+				case _key_8:  sym = 0x38; bufASCIIstr[cursor_pos] = sym; cursor_pos++; break;
+				case _key_9:  sym = 0x39; bufASCIIstr[cursor_pos] = sym; cursor_pos++; break;
+
+				case _key_C:
+					if (cursor_pos > 0)cursor_pos--; // дикрементируем курсор т е сдвигаем влево
+					bufASCIIstr[cursor_pos] = 0;  // удаляем символ в буфере(Важно! в этом буфере хранится нужная нам строка)
+					if (cursor_pos > 0)sym = bufASCIIstr[cursor_pos - 1]; // выводим символ перед курсором который стоит перед удаленным символом
+					break;
+				case _key_ENTER:
+					ResultForInputNum = input::enter_;
+					break;
+				case _key_STOP:
+					ResultForInputNum = input::cancel_;
+					break;
+				default:break;
+				}
+				if (curItem->id == idPass ) sym = '*'; // for pass
+			}
+			else
+			{
+				switch (k_c) {
+				case _key_C:
+					if (cursor_pos > 0)cursor_pos--; // дикрементируем курсор т е сдвигаем влево
+					bufASCIIstr[cursor_pos] = 0;  // удаляем символ в буфере(Важно! в этом буфере хранится нужная нам строка)
+					if (cursor_pos > 0)sym = bufASCIIstr[cursor_pos - 1]; // выводим символ перед курсором который стоит перед удаленным символом
+					break;
+				case _key_ENTER:
+					ResultForInputNum = input::enter_;
+					break;
+				case _key_STOP:
+					ResultForInputNum = input::cancel_;
+					break;
+				default:break;
+				}
+			}
+		break;
+		default:
+		break;
+	}
+}
+
+void UI::command_key()
+{
+	switch (k_c)
+	{
+	case KeyUp:
+		up();
+		break;
+	case KeyDown:
+		down();
+		break;
+	case KeyEnter:
+		enter();
+		break;
+	case KeyStop:
+		stop();
+		break;
+	case KeyDiagn:
+		goto_menuDiagnostika();
 		break;
 	default:
 		break;
@@ -287,13 +306,12 @@ void CMenu::switch_stream()
 }
 
 
-void CMenu::inversemenuitem()
+void UI::inversemenuitem()
 {
 	 int  y = curItem->id;
 	 if (y < max_items)
 	 {
 		 y = y - 1;
-		 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		 gotoxy(0, y);
 		 SetConsoleTextAttribute(hConsole, (WORD)((7 << 4) | 0));
 		 printf("%s", curItem->text);
@@ -301,126 +319,96 @@ void CMenu::inversemenuitem()
 	 }
 }
 
-void CMenu::update_menu(menuItem & menu_p,int x)
+
+void UI::update_menuStart(const int &i)
 {
-	menuItem *menu = &menu_p;
 	gotoxy(0, 0);
-	if (updown == true)
-	{
-		for (int x = 0; x < size; x++)
-		{
-			printf("%s\n", menu[x].text);
-		}
-		updown = false;
+	if (EnterMenu == true || BackMenu == true) {
+		size = GetSizeMenu(*curItem);
+		system("cls");
+		EnterMenu = BackMenu = false;
+		passOK = 0;
 	}
+	DrawMenu(&mStart, size);
 }
 
-void CMenu::update_menuStart(menuItem & menu_p, int x)
+void UI::update_menuAbout()
 {
-	menuItem *menu = &menu_p;
 	gotoxy(0, 0);
 	if (EnterMenu == true || BackMenu == true) {
 		size = GetSizeMenu(*curItem);
 		system("cls");
 		EnterMenu = BackMenu = false;
 	}
-
-	for (int x = 0; x < size; x++)
-	{
-		printf("%s\n", menu[x].text);
-	}
-
-
+	DrawMenu(&mAbout, size);
 }
 
-void CMenu::update_menuDiagn(menuItem & menu_p, int x)
+void UI::update_menuDiagn(const int &i)
 {
-	menuItem *menu = &menu_p;
 	gotoxy(0, 0);
 	if (EnterMenu == true || BackMenu == true) {
 		system("cls");
-		updown = true;
 		size = GetSizeMenu(*curItem);
-		menucounter = 0;
+		menucounter = i;
 		maxcount = size - 2;
 		if (BackMenu == true)
 		{
-			if (x < 6)
-				menucounter = x;
+			if (i < 6)
+				menucounter = i;
 			else
-				menucounter = x - 1;
+				menucounter = i - 1;
 		}
 		EnterMenu = BackMenu = false;
 	}
-	if (updown == true)
-	{
-		for (int x = 0; x < size; x++)
-		{
-			printf("%s\n", menu[x].text);
-		}
-		updown = false;
-	}
+
+	DrawMenu(mDiag, size);
 }
 
-void CMenu::update_menuAllpar(menuItem & menu_p, int x)
+void UI::update_menuAllpar(const int &i)
 {
-	menuItem *menu = &menu_p;
 	gotoxy(0, 0);
 	if (EnterMenu == true || BackMenu == true) {
 		system("cls");
-		updown = true;
 		size = GetSizeMenu(*curItem);
-		menucounter = 0;
+		menucounter = i - 1;
 		maxcount = size - 3;
 		if (BackMenu == true)
 		{
-			menucounter = x - 1;
+			menucounter = i - 1;
 		}
 		EnterMenu = BackMenu = false;
 	}
-	if (updown == true)
-	{
-		for (int x = 0; x < size; x++)
-		{
-			printf("%s\n", menu[x].text);
-		}
-		updown = false;
-	}
+	DrawMenu(mAllpar, size);
 }
 
-void CMenu::update_menuDebugMode(menuItem & menu_p, int x)
+void UI::update_menuDebugMode(const int &i)
 {
-	menuItem *menu = &menu_p;
 	gotoxy(0, 0);
 	if (EnterMenu == true || BackMenu == true) {
 		system("cls");
-		updown = true;
 		size = GetSizeMenu(*curItem);
-		menucounter = 0;
+		menucounter = i - 1;
 		maxcount = size - 2;
 		if (BackMenu == true)
 		{
-			menucounter = x - 1;
+			menucounter = i - 1;
 		}
 		EnterMenu = BackMenu = false;
 	}
-	if (updown == true)
+	DrawMenu(mDebugMode, size);
+}
+
+void UI::update_menuInputPass()
+{
+	if (!passOK)
 	{
-		for (int x = 0; x < size; x++)
-		{
-			printf("%s\n", menu[x].text);
-		}
-		updown = false;
+		gotoxy(0, 12);
+		printf("Введите пароль:\n");
+		printf("16384");
 	}
 }
 
-void CMenu::update_menuInputPass()
-{
-	gotoxy(0, 12);
-	printf("Введите пароль:");
-}
-
-int CMenu::GetSizeMenu(menuItem & menu_p)
+int UI::GetSizeMenu(menuItem & menu_p)
 {
 	menuItem *menu = &menu_p;
 	int x = 0;
@@ -430,52 +418,33 @@ int CMenu::GetSizeMenu(menuItem & menu_p)
 	{	
 		//if (menu[x].id == 0) l++;
 		if (menu[x].id == txt) { return 1; }
-		if (menu[x].id == end) { x = (x - 1 - l) + i; return x; }
+		if (menu[x].id == endmenu) { x = (x - 1 - l) + i; return x; }
 	}
 	return 0;
 }
 
-void CMenu::menu_UP()
+void UI::up()
 {
 	if (curItem->up)
 	{
 		curItem = curItem->up;
 		menucounter--;
 		if (menucounter < 0) menucounter = maxcount;
-		updown = true;
 	}
 }
 
-void CMenu::menu_DOWN()
+void UI::down()
 {
 	if (curItem->down)
 	{
 		curItem = curItem->down;
 		menucounter++;
 		if (menucounter > maxcount) menucounter = 0;
-		updown = true;
 	}
 }
 
-void CMenu::menu_LEFT()
-{
-	if (curItem->left)
-	{
-		curItem = curItem->left;
-		updown = false;
-	}
-}
 
-void CMenu::menu_RIGHT()
-{
-	if (curItem->right)
-	{
-		curItem = curItem->right;
-		updown = false;
-	}
-}
-
-void CMenu::menu_ENTER()
+void UI::enter()
 {
 	if (curItem->enter)
 	{
@@ -484,7 +453,7 @@ void CMenu::menu_ENTER()
 	}
 }
 
-void CMenu::menu_STOP()
+void UI::stop()
 {
 	if (curItem->stop)
 	{
@@ -493,87 +462,11 @@ void CMenu::menu_STOP()
 	}
 }
 
-void CMenu::SetMenu(menuItem & item, int menu_enum, int offset_maxcounter, int counter)
-{
-	curItem = &item;
-	menu = menu_enum;	
-	size = GetSizeMenu(*curItem);
-	maxcount = size - offset_maxcounter;
-	menucounter = counter;
-	EnterMenu = true;
-}
 
-void CMenu::detectmenu()
-{
-	int menuold = menu;
 
-	for (int x = 0; mDiag[x].id != end; x++)
-	{
-		if (curItem == &mDiag[x])
-		{
-			menu = menu_e::diagnostika; 
-			break;
-		}
-	}
-	for (int x = 0; mAllpar[x].id != end; x++)
-	{
-		if (curItem == &mAllpar[x])
-		{
-			menu = menu_e::allpar; 
-			break;
-		}
-	}
-	for (int x = 0; mDebugMode[x].id != end; x++)
-	{
-		if (curItem == &mDebugMode[x])
-		{
-			menu = menu_e::debugmode; 
-			break;
-		}
-	}
 
-	if (curItem == &mStart)
-	{
-		menu = menu_e::start; 
-	}
 
-	if (menu != menuold)
-	{
-		switchmenu(menuold);
-		updown = true;
-	}
-}
-
-void CMenu::switchmenu(int menuold)
-{
-#if(configUseX86 == 1)
-	system("cls");
-#else
-	/*insert your code for clean display on your machine*/
-#endif
-
-	switch (menu)
-	{
-	case menu_e::allpar:
-		if (menuold == menu_e::diagnostika) SetMenu(mAllpar[1], menu_e::allpar, 3, 0);
-		break;
-	case menu_e::diagnostika:
-		if (menuold == menu_e::start)       SetMenu(mDiag[0], menu_e::diagnostika, 2, 0);
-		if (menuold == menu_e::allpar)      SetMenu(mDiag[0], menu_e::diagnostika, 2, 0);
-		if (menuold == menu_e::debugmode)   SetMenu(mDiag[8], menu_e::diagnostika, 2, 7);
-		break;
-	case menu_e::debugmode:
-		if (menuold == menu_e::diagnostika) SetMenu(mDebugMode[1], menu_e::debugmode, 2, 0);
-		break;
-	case menu_e::start:
-		if (menuold == menu_e::diagnostika) SetMenu(mStart, menu_e::start, 1, 0);
-		break;
-	default:
-		break;
-	}
-}
-
-void CMenu::gotoxy(int x, int y)
+void UI::gotoxy(int x, int y)
 {
 #if(configUseX86 == 1)
 	COORD coord = { x,y };
@@ -581,7 +474,7 @@ void CMenu::gotoxy(int x, int y)
 #endif
 }
 
-int CMenu::goto_menuDiagnostika()
+int UI::goto_menuDiagnostika()
 {
 	if (curItem == &mStart)
 	{
@@ -590,6 +483,51 @@ int CMenu::goto_menuDiagnostika()
 		return 1;
 	}
 	return 0;
+}
+
+void UI::check_pass()
+{
+	if (cursor_pos > 4 || ResultForInputNum == enter_)
+	{
+		if (bufASCIIstr[0] == '1' && bufASCIIstr[1] == '6' && bufASCIIstr[2] == '3' && bufASCIIstr[3] == '8' && bufASCIIstr[4] == '4')
+		{
+			gotoxy(15, 12);
+			printf(" Доступ открыт   ");
+			if (menucounter == 0) curItem = &mAllpar[1];
+			if (menucounter == 1) curItem = &mDiag[1];
+			Sleep(500);
+			passOK = 1;
+		}
+		else
+		{
+			gotoxy(15, 12);
+			printf(" Нет доступа     ");
+			//curItem = &mDiag[menucounter];
+			Sleep(500);
+			gotoxy(15, 12);
+			printf("                              \n");
+			//printf("                ");
+			EnterMenu = 0;
+		}
+		ResultForInputNum = reset_;
+		reset_input_buf();
+	}
+	if (ResultForInputNum == cancel_)
+	{
+		curItem = &mDiag[menucounter];
+		ResultForInputNum = reset_;
+		reset_input_buf();
+		gotoxy(0, 12);
+		printf("                              \n");
+		printf("                ");
+		EnterMenu = 0;
+	}
+}
+
+void UI::reset_input_buf()
+{
+	cursor_pos = 0;
+	memset(bufASCIIstr, 0, IN_BUF_SZ);
 }
 
 

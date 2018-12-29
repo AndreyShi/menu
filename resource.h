@@ -27,24 +27,28 @@
 #define _key_9  57
 #define _key_POINT 46
 #define _key_C   8
+#define _key_ENTER 13
+#define _key_STOP 27
 
 #define Entermenu 1
-
+#define IN_BUF_SZ 30
 
 #define txt     9999
 #define title   9998
-#define end     -1
+#define endmenu   -1
 #define idPass   100
 
 #define pointer_not_found -1
+#define pointer_processed  0
 
-enum menu_e {
-	start       = 0,
-	diagnostika = 1,
-	debugmode   = 2,
-	allpar      = 3
+#define LIR_RTC_TICK 10
+
+enum input
+{
+	reset_= 0,
+	enter_ = 1,
+	cancel_ = 2
 };
-
 
 
 const char sDiag[][23]  = { {" Общие параметры"},

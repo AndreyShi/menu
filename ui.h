@@ -3,24 +3,33 @@
 #include "stdlib.h"
 #include "string.h"
 #include "conio.h"
-#include "constant.h"
+#include "resource.h"
 #include "locale.h"
+#include "windows.h"
 
-
-class CMenu {
+DWORD WINAPI Timer(LPVOID);
+class UI {
 
 public:
-	int k_c;
-	bool kbhit;
+	UI();
+	~UI();
+	int k_c;	
 	int size;
 	int maxcount;
 	int menucounter;
-	int menu;
-	bool updown;
 	bool EnterMenu;
 	bool BackMenu;
+	bool kbhit;
+	HANDLE hTreadTimer;
+	HANDLE hConsole;
 
-	int inpass = idPass;
+	unsigned short cursor_pos;
+	unsigned short inputnum;
+	int count;
+	unsigned char sym;
+	unsigned char bufASCIIstr[IN_BUF_SZ];
+	char passOK;
+	input ResultForInputNum;
 
 	typedef struct  menuItem
 	{
@@ -28,50 +37,39 @@ public:
 		const char *text;
 		struct menuItem *up;
 		struct menuItem *down;
-		struct menuItem *left;
-		struct menuItem *right;
 		struct menuItem *enter;
 		struct menuItem *stop;
 	}  menuItem;
-
-	menuItem *curItem, mStart,mDiag[11], mAllpar[8], mDebugMode[6],inputPass;
+	menuItem *curItem, mStart,mDiag[11], mAllpar[8], mDebugMode[6],inputPass, mAbout;
 
 /////////////// main functions of these
-	int updatemenu_m();
-	void update_menuStart(menuItem & menu_p, int x = 0);
-	void update_menuDiagn(menuItem & menu_p, int x = 0);
-	void update_menuAllpar(menuItem & menu_p, int x = 0);
-	void update_menuDebugMode(menuItem & menu_p, int x = 0);
+	int SwitchMenu();
+	void update_menuStart(const int &i = 0);
+	void update_menuAbout();
+	void update_menuDiagn(const int &i);
+	void update_menuAllpar(const int &i);
+	void update_menuDebugMode(const int &i);
 	void update_menuInputPass();
 
-	void initmenu_static();	
+	void flashing_cursor(unsigned int x_, unsigned int y_);
+	void DrawMenu(const menuItem *menu, const int &size);
+	void initmenu();	
 	void inversemenuitem();		
-	void menu_UP();
-	void menu_DOWN();
-	void menu_LEFT();
-	void menu_RIGHT();
-	void menu_ENTER();
-	void menu_STOP();
+	void up();
+	void down();
+	void enter();
+	void stop();
 	
-	void menu_actions();
+	void update();
 	void check_pointer();
-	void switch_stream();
+	void actions();
+	void number_key();
+	void command_key();
 	
 	int GetSizeMenu(menuItem &item);
 	void gotoxy(int x, int y);
 	int goto_menuDiagnostika();
+	void check_pass();
+	void reset_input_buf();
 /////////////////////////
-
-
-	/////// these features are in development
-	void Createmenu(const char items[][23], menuItem &menu, int title1 = 0);
-	void CreatemenuDiag_static();
-	void InsertItem_static(const char *item, menuItem &menu, int insert);
-	int Createitem(const char *item, menuItem &menu, int count, int id = 0);
-	void update_menu(menuItem & menu_p, int x = 0);
-	void updatemenu();
-	void detectmenu();
-	void switchmenu(int menuold);
-	void SetMenu(menuItem &item, int menu, int offset_maxcounter, int counter);
-	///////////////////////////////
 };
